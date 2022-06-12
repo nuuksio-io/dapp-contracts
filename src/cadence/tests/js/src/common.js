@@ -6,3 +6,5 @@ const UFIX64_PRECISION = 8;
 export const toUFix64 = (value) => value.toFixed(UFIX64_PRECISION);
 
 export const getKittyAdminAddress = async () => getAccountAddress("KittyAdmin");
+
+export const getEnvActAdminAddress = async () => getAccountAddress("EnvActAdmin");

@@ -20,7 +20,7 @@ jest.setTimeout(50000);
 describe("Kitty Items", () => {
 	// Instantiate emulator and path to Cadence files
 	beforeEach(async () => {
-		const basePath = path.resolve(__dirname, "../../");
+		const basePath = path.resolve(__dirname, "../../../");
 		const port = 7002;
 		await init(basePath, { port });
 		return emulator.start(port, false);

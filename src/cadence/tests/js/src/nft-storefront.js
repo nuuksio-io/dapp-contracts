@@ -49,7 +49,7 @@ export const setupStorefrontOnAccount = async (account) => {
  * @returns {Promise<*>}
  * */
 export const sellItem = async (seller, itemId, price) => {
-	const name = "nftStorefront/sell_item";
+	const name = "nftStorefront/sell_env_item_fusd";
 	const args = [itemId, price];
 	const signers = [seller];
 
@@ -96,6 +96,32 @@ export const removeItem = async (owner, itemId) => {
 export const getSaleOfferCount = async (account) => {
 	const name = "nftStorefront/get_sale_offers_length";
 	const args = [account];
+
+	return executeScript({ name, args });
+};
+
+/*
+ * Returns the list of items for sale in a given account's storefront.
+ * @param {string} account - account address
+ * @throws Will throw an error if execution will be halted
+ * @returns [{}]
+ * */
+export const getSaleOffers = async (account) => {
+	const name = "nftStorefront/get_sale_offers";
+	const args = [account];
+
+	return executeScript({ name, args });
+};
+
+/*
+ * Returns item for sale in a given account's storefront.
+ * @param {string} account - account address
+ * @throws Will throw an error if execution will be halted
+ * @returns {}
+ * */
+export const getSaleOfferItem = async (account, saleOfferID) => {
+	const name = "nftStorefront/get_env_sale_offer_item";
+	const args = [account, saleOfferID];
 
 	return executeScript({ name, args });
 };
