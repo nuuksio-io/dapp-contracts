@@ -11,7 +11,7 @@ transaction(address: Address, itemID: UInt64) {
         // get user profile to support
         let userProfileRef = supporter.borrow<&EnvironmentAct.User>(from:EnvironmentAct.ProfileStoragePath)!
 
-        let accRef = accCapability.borrow() ?? panic("hhdh noo oh noo")
+        let accRef = accCapability.borrow() ?? panic("could not borrow envAct collection reference")
         accRef.support(id: itemID, from: userProfileRef)
     }
 }
