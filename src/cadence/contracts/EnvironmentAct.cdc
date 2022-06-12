@@ -252,6 +252,9 @@ pub contract EnvironmentAct: NonFungibleToken {
         pub fun withdrawFunds(amount: UFix64, ref: &NFTMinter)
     }
 
+    // A special vault that wrap-up inside a FUSD vault
+    // which restrict the usage of those funds
+    // to be used only in the EnvAct marketplace
     pub resource Vault: EnvironmentActVaultPublic {
         // vault for storing funds from purchasing the EnvAct tokens
         access(contract) let vault: @FUSD.Vault
@@ -299,6 +302,8 @@ pub contract EnvironmentAct: NonFungibleToken {
     }
 
     // createEmptyVault
+    // EnvAct vault: some sale cuts will go here
+    // which allow the owner to reinvest in other tokens
     pub fun createEmptyVault(): @Vault {
         return <-create Vault()
     }
@@ -373,6 +378,12 @@ pub contract EnvironmentAct: NonFungibleToken {
         // Create a Minter resource and save it to storage
         let minter <- create NFTMinter()
         self.account.save(<-minter, to: self.MinterStoragePath)
+
+        // setup EnvAct collection
+        // this collection is useful for admin to be an escrow
+        let collection <- self.createEmptyCollection()
+        self.account.save(<-collection, to: self.CollectionStoragePath)
+        self.account.link<&EnvironmentAct.Collection{NonFungibleToken.CollectionPublic, EnvironmentAct.EnvironmentActCollectionPublic}>(self.CollectionPublicPath, target: self.CollectionStoragePath)
 
         emit ContractInitialized()
 	}
