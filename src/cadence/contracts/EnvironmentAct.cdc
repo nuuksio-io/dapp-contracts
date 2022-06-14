@@ -98,6 +98,10 @@ pub contract EnvironmentAct: NonFungibleToken {
 
             emit EnvironmentActCreated(id: initID, metadata: metadata)
         }
+
+        access(account) fun setSupporter(userProfile: UserProfile) {
+            self.supporters[userProfile.address] = userProfile
+        }
     }
 
     // This is the interface that users can cast their EnvironmentAct Collection as
@@ -185,7 +189,7 @@ pub contract EnvironmentAct: NonFungibleToken {
             let envAct = self.borrowEnvironmentAct(id: id)!
             let address = from.owner!.address
             let userProfile = from.getProfile(address: address)
-            envAct.supporters[address] = userProfile
+            envAct.setSupporter(userProfile: userProfile)
             emit supportAct(id:id, address:address)
         }
 
@@ -194,7 +198,7 @@ pub contract EnvironmentAct: NonFungibleToken {
         // so that the caller can read its metadata and call its methods
         //
         pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
-            return &self.ownedNFTs[id] as &NonFungibleToken.NFT
+            return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
         }
 
         // borrowEnvironmentAct
@@ -203,17 +207,13 @@ pub contract EnvironmentAct: NonFungibleToken {
         // This is safe as there are no functions that can be called on the EnvironmentAct.
         //
         pub fun borrowEnvironmentAct(id: UInt64): &EnvironmentAct.NFT? {
-            if self.ownedNFTs[id] != nil {
-                let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
-                return ref as! &EnvironmentAct.NFT
-            } else {
-                return nil
-            }
+            let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT?
+            return ref as! &EnvironmentAct.NFT?
         }
 
         pub fun getMetadata(id: UInt64): {String: String}? {
             if self.ownedNFTs[id] != nil {
-                let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+                let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT?
                 let nft = ref as! &EnvironmentAct.NFT
                 return nft.metadata
             } else {
@@ -223,13 +223,13 @@ pub contract EnvironmentAct: NonFungibleToken {
 
         pub fun getSupporters(id: UInt64): { Address: UserProfile }? {
             if self.ownedNFTs[id] != nil {
-                let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT
+                let ref = &self.ownedNFTs[id] as auth &NonFungibleToken.NFT?
                 let nft = ref as! &EnvironmentAct.NFT
                 return nft.supporters
             } else {
                 return nil
             }
-        }        
+        }       
 
         // destructor
         destroy() {
